@@ -8,7 +8,20 @@ typedef struct s_data {
 	int	endian;
 }		t_data;
 
+typedef struct s_vars {
+	void	*mlx;
+	void	*window;
+}		t_vars;
 
+int	close(int keycode, t_vars *vars)
+{
+	mlx_destroy_window(vars->mlx, vars->window);
+
+	return (keycode);
+}
+
+
+// porque essa funcao funciona???
 void	my_pixel_put(t_data *data, int x, int y, int color)
 {
 	char 	*dst;
@@ -55,22 +68,31 @@ void	put_circle(t_data *data, int a, int b, int size, int color)
 	// (x -a)2 + (y - b)2 = size 2
 }
 
+void	print_str(t_vars *vars,  int x, int y, int color, char *str)
+{
+	mlx_string_put(vars->mlx, vars->window, x, y, color, str);
+}
+
 int	main(void)
 {
-	void	*mlx;
-	void	*window;
+	t_vars	vars;
 	t_data	img;
 
-	mlx = mlx_init();
-	window = mlx_new_window(mlx, NUM_ROWS, NUM_COLS, "TESTE PRIMEIRO");
-	img.img = mlx_new_image(mlx, NUM_ROWS, NUM_COLS);
+	vars.mlx = mlx_init();
+	vars.window = mlx_new_window(vars.mlx, NUM_ROWS, NUM_COLS, "TESTE PRIMEIRO");
 
+	img.img = mlx_new_image(vars.mlx, NUM_ROWS, NUM_COLS);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_length, &img.endian);
 
 	my_pixel_put(&img, 250, 250, 0x0000FF00);
 	//put_rect(&img, 0, 0, 500, 500, 0x00FF0000);
 	put_circle(&img, 249, 249, 249, 0x0000FF00);
-	mlx_put_image_to_window(mlx, window, img.img, 0, 0);
-	mlx_loop(mlx);
+	mlx_put_image_to_window(vars.mlx, vars.window, img.img, 0, 0);
+	mlx_string_put(vars.mlx, vars.window, 20, 20 , 0x000000FF, "Hi, I am mlx_string_put");
+	
+	print_str(&vars, 40, 40, 0x00FF0000, "hello from print_str! Im I red?");
+//	mlx_key_hook(vars.window, close, &vars);
+	mlx_hook(vars.window, 2, 1L<<0, close, &vars);
+	mlx_loop(vars.mlx);
 	return (0);
 }

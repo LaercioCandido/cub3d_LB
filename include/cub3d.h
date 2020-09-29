@@ -5,6 +5,7 @@
 # include <math.h>
 # include <stdio.h>
 
+
 # define NUM_ROWS 500
 # define NUM_COLS 500
 
